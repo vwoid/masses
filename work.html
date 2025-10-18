@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Madalin Message Hub</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --text: #f3f5f7;
+      --accent: #8ab4f8;
+      --button: linear-gradient(135deg, #0072ff, #00c6ff);
+      --button-hover: linear-gradient(135deg, #00b4db, #0083b0);
+      --glass-blur: blur(20px);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: all 0.25s ease;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #111827, #0b0f19);
+      color: var(--text);
+      font-family: "Inter", "Poppins", sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 50px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .section {
+      backdrop-filter: var(--glass-blur);
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 35px;
+      width: 95%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 10px rgba(138, 180, 248, 0.3);
+    }
+
+    .msg-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .msg {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 18px;
+      width: 320px;
+      white-space: pre-wrap;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.5s forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .msg span {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-right: 10px;
+    }
+
+    .msg button {
+      background: var(--button);
+      border: none;
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 10px rgba(0, 114, 255, 0.3);
+    }
+
+    .msg button:hover {
+      background: var(--button-hover);
+      transform: scale(1.05);
+    }
+
+    .reroll {
+      background: var(--button);
+      border: none;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      font-size: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 114, 255, 0.3);
+    }
+
+    .reroll:hover {
+      background: var(--button-hover);
+      transform: scale(1.05);
+      box-shadow: 0 6px 25px rgba(0, 150, 255, 0.4);
+    }
+
+    footer {
+      opacity: 0.7;
+      font-size: 0.9rem;
+      color: #999;
+      text-align: center;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>💎 Madalin’s Message Hub</h1>
+
+  <div class="section" id="bundles">
+    <h2>Bundles</h2>
+    <div class="msg-row" id="bundleList"></div>
+    <button class="reroll" id="rerollBundles">🎲 Reroll Bundles</button>
+  </div>
+
+  <div class="section" id="mass">
+    <h2>Mass Messages</h2>
+    <div class="msg-row" id="massList"></div>
+    <button class="reroll" id="rerollMass">🎲 Reroll Mass</button>
+  </div>
+
+  <div class="section" id="timeMass">
+    <h2>Time-Based Mass Messages</h2>
+    <div class="msg-row" id="timeMassList"></div>
+    <button class="reroll" id="rerollTimeMass">🎲 Reroll Time Messages</button>
+  </div>
+
+  <footer>Made by Madalin ✨</footer>
+
+  <script>
+    // placeholder safe content only
+    const bundlePool = [
+      "Bundle example 1",
+      "Bundle example 2",
+      "Bundle example 3",
+      "Bundle example 4",
+      "Bundle example 5"
+    ];
+
+    const massPool = [
+      "Morning update: tasks completed, reports sent.",
+      "End of day summary: everything delivered and confirmed.",
+      "Weekly overview: projects closed successfully.",
+      "Batch updates: awaiting review.",
+      "Client feedback compiled, next steps scheduled."
+    ];
+
+    const timeMassPool = [
+      "Good morning! 🌞 Hope your day starts amazing.",
+      "Good morning! ☀️ Don't forget to grab breakfast and smile.",
+      "Good afternoon! 🌤 Hope your day is going smooth.",
+      "Good afternoon! 🕒 Quick update: everything on track.",
+      "Good evening! 🌙 Relax and enjoy your night.",
+      "Good evening! ✨ Time to unwind and recharge."
+    ];
+
+    const bundleList = document.getElementById("bundleList");
+    const massList = document.getElementById("massList");
+    const timeMassList = document.getElementById("timeMassList");
+
+    const rerollBundles = document.getElementById("rerollBundles");
+    const rerollMass = document.getElementById("rerollMass");
+    const rerollTimeMass = document.getElementById("rerollTimeMass");
+
+    function copyText(msg, btn) {
+      navigator.clipboard.writeText(msg);
+      btn.textContent = "✅ Copied!";
+      setTimeout(() => (btn.textContent = "Copy"), 1500);
+    }
+
+    function randomPick(pool, count) {
+      return pool.sort(() => 0.5 - Math.random()).slice(0, count);
+    }
+
+    function showMessages(pool, container, count) {
+      container.innerHTML = "";
+      const chosen = randomPick(pool, count);
+      chosen.forEach((msg, i) => {
+        const div = document.createElement("div");
+        div.className = "msg";
+        div.style.animationDelay = `${i * 0.1}s`;
+        div.innerHTML = `<span>${msg}</span>`;
+        const btn = document.createElement("button");
+        btn.textContent = "Copy";
+        btn.onclick = () => copyText(msg, btn);
+        div.appendChild(btn);
+        container.appendChild(div);
+      });
+    }
+
+    rerollBundles.onclick = () => showMessages(bundlePool, bundleList, 3);
+    rerollMass.onclick = () => showMessages(massPool, massList, 3);
+    rerollTimeMass.onclick = () => showMessages(timeMassPool, timeMassList, 3);
+
+    showMessages(bundlePool, bundleList, 3);
+    showMessages(massPool, massList, 3);
+    showMessages(timeMassPool, timeMassList, 3);
+  </script>
+</body>
+</html>
